@@ -11,3 +11,5 @@ This should run the applciation. If you need to restart after changes, you can u
 docker-compose down
 
 docker-compose up -d
+
+Once it's running, open up localhost:8888 in a browser and there should be some UI showing up
