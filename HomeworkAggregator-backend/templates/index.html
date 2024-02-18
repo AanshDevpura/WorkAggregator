@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Visualization Dashboard</title>
+    <style>
+        #chart {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Visualization Dashboard</h1>
+
+    <button onclick="requestData('Temperature')">Get Temperature Data</button>
+    <button onclick="requestData('PH')">Get pH Data</button>
+    <button onclick="requestData('Oxygen')">Get Oxygen Data</button>
+    <button onclick="requestData('Pressure')">Get Pressure Data</button>
+    <button id="downloadCsv" onclick="downloadCSV()" disabled>Download as CSV</button>
+
+    <div id="chart"></div>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script>
+        function requestData(dataType) {
+            fetch('/api/data/' + dataType)
+                .then(response => response.json())
+                .then(data => {
+                    createChart(data, dataType);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        
+        let currentData = null;
+        function createChart(data, dataType) {
+            // Clear existing content
+            currentData = data
+            d3.select("#chart").html("");
+        
+            const times = data.times.map(d => new Date(d));
+            const values = data.values;
+        
+            // Combine times and values into a single array of objects
+            const combinedData = times.map((time, index) => ({
+                time: time,
+                value: values[index]
+            }));
+        
+            // Set dimensions and margins for the graph
+            const margin = { top: 20, right: 30, bottom: 30, left: 60 },
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+        
+            // Append SVG object to the chart div
+            const svg = d3.select("#chart")
+                .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
+        
+            // Add X axis
+            const x = d3.scaleTime()
+                .domain(d3.extent(times))
+                .range([0, width]);
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+        
+            // Add Y axis
+            const y = d3.scaleLinear()
+                .domain([d3.min(values), d3.max(values)])
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+            
+            // Add X label
+            svg.append("text")
+                .attr("transform", "translate(" + (width / 2) + " ," + (height + 40) + ")")
+                .style("text-anchor", "middle")
+                .text("Time");
+
+            // Add Y label
+            svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 20)
+                .attr("x", -margin.top)
+                .text(`${dataType} (${data.units})`);
+        
+            // Add scatterplot points
+            svg.selectAll("circle")
+                .data(combinedData)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    return x(d.time);
+                })
+                .attr("cy", function (d) {
+                    return y(d.value);
+                })
+                .attr("r", 2)
+                .attr("fill", "steelblue");
+
+            document.getElementById('downloadCsv').disabled = false;
+        }
+
+        function downloadCSV() {
+            if (!currentData) {
+                alert("No data available to download");
+                return;
+            }
+        
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Time,Value\n";  // Column headers
+        
+            currentData.times.forEach((time, index) => {
+                let value = currentData.values[index];
+                csvContent += `${time},${value}\n`;
+            });
+        
+            // Create a download link and trigger it
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "data.csv");
+            document.body.appendChild(link);  // For Firefox
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

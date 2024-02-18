@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/root/HomeworkAggregator
+    command: ["./run-app"]
+    ports:
+      - "8888:8888"
+    environment:
+      - POSTGRES_USER=team28
+      - POSTGRES_PASSWORD=team28password
+      - POSTGRES_DB=hwuserinfo
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432   
+
+  db:
+    image: postgres
+    container_name: homeworkaggregator_userinfo
+    environment:
+      POSTGRES_USER: team28
+      POSTGRES_PASSWORD: team28password
+      POSTGRES_DB: hwuserinfo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
