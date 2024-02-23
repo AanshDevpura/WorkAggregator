@@ -2,46 +2,28 @@
 
 import os
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# # Database configuration
-# app.config['SQLALCHEMY_DATABASE_URI'] = (
-#     f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@"
-#     f"{os.environ['POSTGRES_HOST']}:{os.environ['POSTGRES_PORT']}/{os.environ['POSTGRES_DB']}"
-# )
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@"
+    f"{os.environ['POSTGRES_HOST']}:{os.environ['POSTGRES_PORT']}/{os.environ['POSTGRES_DB']}"
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
-# class DataModel(db.Model):
-#     """Base model for data points, which allows for loose-er coupling for extensibility and testing mocks
 
-#     Attributes:
-#         time (db.Column): Timestamp of the data point.
-#         value (db.Column): Value of the data point.
-#     """
-#     __abstract__ = True
-#     time = db.Column(db.TIMESTAMP, primary_key=True)
-#     value = db.Column(db.Float)
-    
-# class TemperatureModel(DataModel):
-#     __tablename__ = 'CM_HAM_DO_AI1/Temp_value'
-#     units = "Celsius"
+class AssignmentModel(db.Model):
+    """Model for assignments"""
+    __tablename__ = 'assignments'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    due_time = db.Column(db.TIMESTAMP)
 
-# class PHModel(DataModel):
-#     __tablename__ = 'CM_HAM_PH_AI1/pH_value'
-#     units = "pH"
-
-# class OxygenModel(DataModel):
-#     __tablename__ = 'CM_PID_DO/Process_DO'
-#     units = "%"
-
-# class PressureModel(DataModel):
-#     __tablename__ = 'CM_PRESSURE/Output'
-#     units = "psi"
 
 @app.route('/')
 def index():
@@ -52,37 +34,55 @@ def index():
     """
     return render_template('index.html')
 
-# @app.route('/api/data/<string:data_type>', methods=['GET'])
-# def get_data(data_type):
-#     """API endpoint to retrieve data based on the data type.
 
-#     Args:
-#         data_type (str): The type of data to retrieve (e.g., 'temperature').
 
-#     Returns:
-#         Flask response: JSON representation of the data including times, values, and units.
-#     """
-    
-#     model_mapping = {
-#         "Temperature": TemperatureModel,
-#         "PH": PHModel,
-#         "Oxygen": OxygenModel,
-#         "Pressure": PressureModel
-#     }
+@app.route('/api/assignments', methods=['GET'])
+def get_assignments():
+    """API endpoint to retrieve assignments.
 
-#     if data_type not in model_mapping:
-#         return jsonify({"error": "Invalid data type"}), 400
+    Returns:
+        Flask response: JSON representation of the assignments including names and due times.
+    """
+    assignments = AssignmentModel.query.all()
 
-#     model = model_mapping[data_type]
-#     data = db.session.query(model).all()
+    response_data = [{
+        "name": assignment.name,
+        "due_time": assignment.due_time.isoformat()
+    } for assignment in assignments]
 
-#     response_data = {
-#         "times": [data_point.time.isoformat() for data_point in data],
-#         "values": [data_point.value for data_point in data],
-#         "units": model.units
-#     }
+    return jsonify(response_data)
 
-#     return jsonify(response_data)
+
+@app.route('/api/assignments', methods=['POST'])
+def create_assignment():
+    """API endpoint to create a new assignment."""
+    data = request.json
+    name = data.get('name')
+    due_time = data.get('due_time')
+
+    if not name or not due_time:
+        return jsonify({"error": "Name and due time are required."}), 400
+
+    new_assignment = AssignmentModel(name=name, due_time=due_time)
+    db.session.add(new_assignment)
+    db.session.commit()
+
+    return jsonify({"message": "Assignment created successfully."}), 201
+
+
+@app.route('/api/assignments/<int:assignment_id>', methods=['DELETE'])
+def delete_assignment(assignment_id):
+    """API endpoint to delete an assignment."""
+    assignment = AssignmentModel.query.get(assignment_id)
+
+    if not assignment:
+        return jsonify({"error": "Assignment not found."}), 404
+
+    db.session.delete(assignment)
+    db.session.commit()
+
+    return jsonify({"message": "Assignment deleted successfully."})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
