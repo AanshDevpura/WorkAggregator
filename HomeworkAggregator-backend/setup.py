@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'Flask',
         'Flask-SQLAlchemy',
-        'psycopg2-binary'
+        'psycopg2-binary',
+        'pytest'
     ],
 )

@@ -1,11 +1,22 @@
 #!/bin/bash
 
-# Activate the virtual environment (if you're using one)
-source /root/.venv/bin/activate
+# Run tests
+echo "Running unit tests..."
+pytest tests/unit-test.py
+TESTS_EXIT_CODE=$?
 
-# Set environment variables (if needed)
-export FLASK_APP=app.py
-export FLASK_ENV=development  # Use 'production' in a production environment
+# Check the exit code of the pytest command to decide whether to start the Flask app
+if [ $TESTS_EXIT_CODE -ne 0 ]; then
+  echo "Tests failed, exiting."
+  exit $TESTS_EXIT_CODE
+else
+  echo "Tests passed, starting the server."
 
-# Start the Flask application
-flask run --host=0.0.0.0 --port=8888
+  # Set environment variables (if needed)
+  # Consider moving these to before the tests if they're needed for testing
+  export FLASK_APP=app.py
+  export FLASK_ENV=development  # Use 'production' in a production environment
+
+  # Start the Flask application
+  flask run --host=0.0.0.0 --port=8888
+fi
