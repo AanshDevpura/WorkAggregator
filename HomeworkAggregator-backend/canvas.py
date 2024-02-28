@@ -33,11 +33,11 @@ def get_canvas_assignments(access_token):
             due_date = datetime.strptime(assignment["due_at"], "%Y-%m-%dT%H:%M:%SZ")
             if due_date > now:
                 # Store assignment as a list
-                assignment_info = [
-                    submission["context_name"],
-                    assignment["name"],
-                    due_date.strftime('%Y-%m-%d %H:%M:%S')  # Convert due_date to string
-                ]
+                assignment_info = {
+                    "course_name" : submission["context_name"],
+                    "assignment_name" : assignment["name"],
+                    "due_date" : due_date.strftime('%Y-%m-%d %H:%M:%S')  # Convert due_date to string
+                }
                 assignments.append(assignment_info)
         return assignments
     else:
@@ -55,10 +55,7 @@ if __name__ == "__main__":
     if canvas_assignments:
         print("Canvas Assignments:")
         for assignment in canvas_assignments:
-            print(f"Course: {assignment[0]}")
-            print(f"Assignment: {assignment[1]}")
-            print(f"Due Date: {assignment[2]}")
-            print()
+            print(assignment)
         
         # Save assignments to JSON file
         save_to_json(canvas_assignments)
