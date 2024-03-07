@@ -9,6 +9,10 @@ setup(
         'Flask',
         'Flask-SQLAlchemy',
         'psycopg2-binary',
-        'pytest'
+        'pytest',
+        'requests',
+        'datetime',
+        'tzlocal',
+        'pytz'
     ],
 )
