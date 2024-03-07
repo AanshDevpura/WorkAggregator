@@ -20,7 +20,7 @@ RUN pip install --upgrade pip setuptools wheel
 WORKDIR /root/HomeworkAggregator
 
 # Install package
-COPY . .
+COPY --chown= . .
 RUN pip install . --requirement requirements.txt
 
 ENTRYPOINT ["tini", "-v", "--"]
