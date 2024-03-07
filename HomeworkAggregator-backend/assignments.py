@@ -8,7 +8,7 @@ def get_canvas_token():
     canvas_token = input("Please enter your Canvas access token: ")
     return canvas_token
 
-def (acget_canvas_assignmentscess_token):
+def get_canvas_assignments(access_token):
     
     # Headers with authentication
     headers = {
