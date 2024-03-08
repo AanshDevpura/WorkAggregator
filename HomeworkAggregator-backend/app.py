@@ -5,13 +5,13 @@ import secrets
 import requests
 
 from urllib.parse import urlencode
-from flask import Flask, redirect, url_for, render_template, flash, session, current_app, request, abort
+from flask import Flask, redirect, url_for, jsonify, render_template, flash, session, current_app, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 
 app = Flask(__name__, static_folder='static')
 
-#Auth Configs
+# Authorization Configs, used to make working with OAuth2 requests easier
 app.config['OAUTH2_PROVIDERS'] = {
     # GitHub OAuth 2.0 documentation:
     # https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
@@ -28,27 +28,31 @@ app.config['OAUTH2_PROVIDERS'] = {
     },
 }
 
-# Database configuration
+# Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@"
     f"{os.environ['POSTGRES_HOST']}:{os.environ['POSTGRES_PORT']}/{os.environ['POSTGRES_DB']}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# A secret key is required for session management
 app.config['SECRET_KEY'] = 'top secret!'
 
 db = SQLAlchemy(app)
+
+# Use the login manager to abtract away tracking sessions
 login = LoginManager(app)
 login.login_view = 'index'
 
-
+# Table Schema for the assignments table in our database
 class AssignmentModel(db.Model):
     """Model for assignments"""
-    __tablename__ = 'assignments'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    due_time = db.Column(db.TIMESTAMP)
-    
+    __tablename__ = 'hwaggregator_usrinfo'
+    userid = db.Column(db.String, primary_key=True)
+    canvas_credentials = db.Column(db.String)
+    schedule = db.Column(db.String)
+
+# Table Schema for the users table in our database
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -56,7 +60,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), nullable=True)
   
 # Courtesy of https://github.com/miguelgrinberg/flask-oauth-example/blob/main/app.py  
-#OAuth2 Endpoint
+# OAuth2 Endpoint. Redirects the user to the OAuth2 provider's authorization URL to log in
 @app.route('/authorize/<provider>')
 def oauth2_authorize(provider):
     if not current_user.is_anonymous:
@@ -82,6 +86,7 @@ def oauth2_authorize(provider):
     # redirect the user to the OAuth2 provider authorization URL
     return redirect(provider_data['authorize_url'] + '?' + qs)
 
+# After logging in, the user is redirected to this endpoint. This endpoint exchanges the authorization code for an access token and uses the access token to get the user's email address, and accepts the user into the application
 @app.route('/callback/<provider>')
 def oauth2_callback(provider):
     if not current_user.is_anonymous:
@@ -142,16 +147,19 @@ def oauth2_callback(provider):
     login_user(user)
     return redirect(url_for('index'))
 
+# Logout endpoint. Logs the user out of the application
 @app.route('/logout')
 def logout():
     logout_user()
     flash('You have been logged out.')
     return redirect(url_for('index'))
 
+# Load the user from the database to see if they already exist
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
 
+# Our home page. This is the main page of the application on open
 @app.route('/')
 def index():
     """Render the home page of the application.
@@ -161,8 +169,95 @@ def index():
     """
     return render_template('index.html')
 
+# Renders an html template to display the user's schedule loaded from the database
+@app.route('/schedule')
+def render_schedule():
+    """Render the schedule page of the application.
 
+    Returns:
+        The rendered template for the schedule.html.
+    """
+    return render_template('schedule.html')
 
+# TODO
+@app.route('/api/v1/addcredentials/<string:credentials>', methods=['POST'])
+def add_credentials(credentials):
+    """API endpoint to add credentials for a user.
+
+    Args:
+        credentials (str): JSON representation of the credentials containing a platform, userid, and a credentials array. Expect to be of the form
+        
+        {
+            "platform": "string",
+            "userid": "string",
+            "credentials": {"username": "value", "password": "value", "accesstoken": "value"}
+        }
+        
+
+    Returns:
+        Flask response: JSON representation of the credentials.
+    """
+    return jsonify({"identifier": credentials, "credentials": request.json})
+
+# TODO
+@app.route('/api/v1/generateschedule/<string:userid>', methods=['POST'])
+def generate_schedule(userid):
+    """API endpoint to add generate a schedule for a user.
+
+    Args:
+        userid (str): userid as a string
+
+        
+
+    Returns:
+        Flask response: JSON representation of the schedule. It should have a schema of the form 
+        [
+            {
+                "assignment_name": "string",
+                "date_end": "YYYY-MM-DD",
+                "date_begin": "YYYY-MM-DD",
+                "source": "string",
+                "additionalinfo": [
+                "string",
+                "string"
+                ]
+            }
+        ]
+    """
+    return jsonify({"identifier": userid})
+
+# TODO
+@app.route('/api/v1/modifyschedule/<string:changes>', methods=['PUT'])
+def modify_schedule(userid):
+    """API endpoint to modify a user's schedule.
+
+    Args:
+        changes (str): JSON representation of the credentials containing a platform, userid, and a credentials array. Expect to be of the form
+        
+        {
+            "userid": "string",
+            "schedule": schedule of json schema:
+            [
+                {
+                    "assignment_name": "string",
+                    "date_end": "YYYY-MM-DD",
+                    "date_begin": "YYYY-MM-DD",
+                    "source": "string",
+                    "additionalinfo": [
+                    "string",
+                    "string"
+                    ]
+                }
+            ]
+        }
+        
+
+    Returns:
+        Flask response: JSON representation of the credentials.
+    """
+    return jsonify({"identifier": userid})
+
+# API endpoint to retrieve all assignments
 @app.route('/api/assignments', methods=['GET'])
 def get_assignments():
     """API endpoint to retrieve assignments.
@@ -173,13 +268,14 @@ def get_assignments():
     assignments = AssignmentModel.query.all()
 
     response_data = [{
-        "name": assignment.name,
-        "due_time": assignment.due_time.isoformat()
+        "name": assignment.userid,
+        "canvas_creds": assignment.canvas_credentials,
+        "schedule": assignment.schedule
     } for assignment in assignments]
 
     return jsonify(response_data)
 
-
+# API endpoint to retrieve add an assignment
 @app.route('/api/assignments', methods=['POST'])
 def create_assignment():
     """API endpoint to create a new assignment."""
@@ -196,7 +292,7 @@ def create_assignment():
 
     return jsonify({"message": "Assignment created successfully."}), 201
 
-
+# API endpoint to retrieve delete an assignment
 @app.route('/api/assignments/<int:assignment_id>', methods=['DELETE'])
 def delete_assignment(assignment_id):
     """API endpoint to delete an assignment."""

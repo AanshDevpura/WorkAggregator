@@ -83,10 +83,10 @@
 						<section>
 							<div class="content">
 								<div class="inner">
-									<h2>Feugiat consequat</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+									<h2>Generate A Schedule</h2>
+									<p>Automatically produce a tailored schedule according to the credentials provided</p>
 									<ul class="actions">
-										<li><a href="static/generic.html" class="button">Learn more</a></li>
+										<li><a href="{{url_for('render_schedule')}}" class="button">Generate</a></li>
 									</ul>
 								</div>
 							</div>
@@ -133,7 +133,7 @@
 								</section>
 							</div>
 							<ul class="actions">
-								<li><a href="generic.html" class="button">Learn more</a></li>
+								<li><a href="{{url_for('render_schedule')}}" class="button">Learn more</a></li>
 							</ul>
 						</div>
 					</section>
@@ -209,7 +209,7 @@
 			</footer>
 
 		<!-- Scripts -->
-            <script src="static/styles/js/services/services.js"></script>
+            <script src="static/services/services.js"></script>
 			<script src="static/styles/js/jquery.min.js"></script>
 			<script src="static/styles/js/jquery.scrollex.min.js"></script>
 			<script src="static/styles/js/jquery.scrolly.min.js"></script>

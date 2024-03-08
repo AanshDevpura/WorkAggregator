@@ -10,6 +10,6 @@ setup(
         'Flask-SQLAlchemy',
         'psycopg2-binary',
         'pytest',
-        'requests'
+        'requests',
     ],
 )

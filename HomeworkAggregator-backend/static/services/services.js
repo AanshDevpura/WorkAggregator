@@ -13,14 +13,17 @@ document.getElementById('prairielearnForm').addEventListener('submit', function(
     requestData();
 });
 
+//TODO
 function addCredentials(userid, credentials) {
     return null;
 }
 
+//TODO
 function generateSchedule(userid) {
     return null;
 }
 
+//TODO
 function modifySchedule(userid, newschedule) {
     return null;
 }
