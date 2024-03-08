@@ -36,12 +36,21 @@
 						<div class="inner">
 							<h1>Work Aggregator</h1>
 							<p>A central platform for getting all your tasks into one place</p>
-							<ul class="actions">
-								<li><a href="#one" class="button scrolly">Get Started</a></li>
-							</ul>
+
+                            {% if current_user.is_authenticated %}
+                                <p>Hi, {{ current_user.username }}!</p>
+                                <a class="btn btn-primary" href="{{ url_for('logout') }}">Logout</a>
+                                <ul class="actions">
+                                    <li><a href="#one" class="button scrolly">Get Started</a></li>
+                                </ul>
+                            {% else %}
+                                <p>
+                                <a class="button" href="{{ url_for('oauth2_authorize', provider='github') }}">Login with GitHub</a>
+                                </p>
+                            {% endif %}
 						</div>
 					</section>
-
+                    {% if current_user.is_authenticated %}
 				<!-- One -->
 					<section id="one" class="wrapper style2 spotlights">
 						<section>
@@ -83,7 +92,9 @@
 							</div>
 						</section>
 					</section>
-
+                    {%else%}
+                    <div class="image fit"><img src="static/styles/images/lock.png" alt="" /></span>
+                    {% endif %}
 				<!-- Two -->
 					<section id="two" class="wrapper style3 fade-up">
 						<div class="inner">
