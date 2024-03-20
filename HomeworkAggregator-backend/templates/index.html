@@ -25,6 +25,9 @@
 							<li><a href="#three">Get in touch</a></li>
 						</ul>
 					</nav>
+					{% if current_user.is_authenticated %}
+					<a class="button" href="{{ url_for('logout') }}">Logout</a>
+					{% endif %}
 				</div>
 			</section>
 
@@ -39,7 +42,6 @@
 
                             {% if current_user.is_authenticated %}
                                 <p>Hi, {{ current_user.username }}!</p>
-                                <a class="btn btn-primary" href="{{ url_for('logout') }}">Logout</a>
                                 <ul class="actions">
                                     <li><a href="#one" class="button scrolly">Get Started</a></li>
                                 </ul>
@@ -50,9 +52,9 @@
                             {% endif %}
 						</div>
 					</section>
-                    {% if current_user.is_authenticated %}
 				<!-- One -->
 					<section id="one" class="wrapper style2 spotlights">
+						{% if current_user.is_authenticated %}
 						<section>
 							<div class="content">
 								<div class="inner">
@@ -91,10 +93,16 @@
 								</div>
 							</div>
 						</section>
+						{%else%}
+						<section>
+						<div class="content">
+							<div class="inner">
+								<h2>Log in to access</h2>
+							</div>
+						</div>
+						</section>
+						{% endif %}
 					</section>
-                    {%else%}
-                    <div class="image fit"><img src="static/styles/images/lock.png" alt="" /></span>
-                    {% endif %}
 				<!-- Two -->
 					<section id="two" class="wrapper style3 fade-up">
 						<div class="inner">
