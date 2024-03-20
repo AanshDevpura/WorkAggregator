@@ -11,5 +11,8 @@ setup(
         'psycopg2-binary',
         'pytest',
         'requests',
+        'datetime',
+        'tzlocal',
+        'pytz'
     ],
 )
