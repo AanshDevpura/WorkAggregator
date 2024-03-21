@@ -9,6 +9,8 @@ from flask import Flask, redirect, url_for, jsonify, render_template, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 
+import assignments
+
 app = Flask(__name__, static_folder='static')
 
 # Authorization Configs, used to make working with OAuth2 requests easier
@@ -50,7 +52,10 @@ class AssignmentModel(db.Model):
     __tablename__ = 'hwaggregator_usrinfo'
     userid = db.Column(db.String, primary_key=True)
     canvas_credentials = db.Column(db.String)
-    schedule = db.Column(db.String)
+    moodle_credentials = db.Column(db.String)
+    schedule = db.Column(db.JSON)
+    prairielearn_credentials = db.Column(db.String)
+    gradescope_credentials = db.Column(db.String)
 
 # Table Schema for the users table in our database
 class User(UserMixin, db.Model):
@@ -177,11 +182,12 @@ def render_schedule():
     Returns:
         The rendered template for the schedule.html.
     """
+    
     return render_template('schedule.html')
 
 # TODO
-@app.route('/api/v1/addcredentials/<string:credentials>', methods=['POST'])
-def add_credentials(credentials):
+@app.route('/api/v1/addcredentials/<string:userid>', methods=['POST'])
+def add_credentials(userid):
     """API endpoint to add credentials for a user.
 
     Args:
@@ -197,7 +203,34 @@ def add_credentials(credentials):
     Returns:
         Flask response: JSON representation of the credentials.
     """
-    return jsonify({"identifier": credentials, "credentials": request.json})
+    
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.json
+    platform = data.get('platform')
+    
+    platform_credentials_field = {
+        "canvas": "canvas_credentials",
+        "moodle": "moodle_credentials",
+        "prairielearn": "prairielearn_credentials",
+        "gradescope": "gradescope_credentials",
+    }
+
+    access_token = data.get('credentials', {}).get('accesstoken')
+
+    if platform in platform_credentials_field:
+        existing_assignment = AssignmentModel.query.filter_by(userid=userid).first()
+        credential_field = platform_credentials_field[platform]
+
+        if existing_assignment:
+            setattr(existing_assignment, credential_field, access_token)
+        else:
+            new_assignment = AssignmentModel(userid=userid, **{credential_field: access_token})
+            db.session.add(new_assignment)
+        
+        db.session.commit()
+    return jsonify({"received_data": data}), 200
 
 # TODO
 @app.route('/api/v1/generateschedule/<string:userid>', methods=['POST'])
@@ -206,8 +239,6 @@ def generate_schedule(userid):
 
     Args:
         userid (str): userid as a string
-
-        
 
     Returns:
         Flask response: JSON representation of the schedule. It should have a schema of the form 
@@ -224,7 +255,13 @@ def generate_schedule(userid):
             }
         ]
     """
-    return jsonify({"identifier": userid})
+    
+    # Get credentials from the database
+    credentials = AssignmentModel.query.filter_by(userid=userid).first()    
+    canvas_token = credentials.canvas_credentials
+    moodle_token = credentials.moodle_credentials
+    canvas_assignments = assignments.get_canvas_assignments(canvas_token)
+    return jsonify({"canvas_creds": canvas_token})
 
 # TODO
 @app.route('/api/v1/modifyschedule/<string:changes>', methods=['PUT'])

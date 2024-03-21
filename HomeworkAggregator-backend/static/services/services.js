@@ -15,11 +15,15 @@ document.getElementById('prairielearnForm').addEventListener('submit', function(
 
 //TODO
 function addCredentials(userid, credentials) {
+    
     return null;
 }
 
 //TODO
 function generateSchedule(userid) {
+
+
+
     return null;
 }
 

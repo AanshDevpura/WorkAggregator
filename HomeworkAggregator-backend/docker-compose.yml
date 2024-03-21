@@ -17,7 +17,6 @@ services:
       - GITHUB_CLIENT_ID=14bda77f480ab19d7bbf
       - GITHUB_CLIENT_SECRET=d32a058922985c50b03b20724f7f7000d0bf0853
       - SUPABASE_DB=gM5Z7Lib1XL5afgf
-      - PRODUCTION=false
 
   db:
     image: postgres

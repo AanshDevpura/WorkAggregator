@@ -3907,3 +3907,26 @@ input, select, textarea {
 			}
 
 		}
+
+		div.scrollmenu {
+			overflow: auto;
+			white-space: nowrap;
+			opacity: 0.8
+		}
+		
+		div.scrollmenu a {
+			display: inline-block;
+			color: white;
+			text-align: center;
+			padding: 14px;
+			text-decoration: none;
+			text-wrap: wrap;
+			width: 33%;
+		}
+		
+		div.scrollmenu a:hover {
+			opacity: 1.0;
+			transition: background-color 0.5s ease-in-out;
+			background-color: #3b2947;
+		}
+
