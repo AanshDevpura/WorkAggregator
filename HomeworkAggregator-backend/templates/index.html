@@ -23,11 +23,10 @@
 							<li><a href="#one">Try It Out</a></li>
 							<li><a href="#two">What we do</a></li>
 							<li><a href="#three">Get in touch</a></li>
+							<li><a class="button" href="{{ url_for('logout') }}" style="{{ 'display: none;' if not current_user.is_authenticated else '' }}">Logout</a></li>
+
 						</ul>
 					</nav>
-					{% if current_user.is_authenticated %}
-					<a class="button" href="{{ url_for('logout') }}">Logout</a>
-					{% endif %}
 				</div>
 			</section>
 
@@ -94,7 +93,9 @@
 									<h2>Generate A Schedule</h2>
 									<p>Automatically produce a tailored schedule according to the credentials provided</p>
 									<ul class="actions">
-										<li><a href="{{url_for('render_schedule')}}" class="button">Generate</a></li>
+										{%if current_user.is_authenticated%}
+											<li><a href="{{ url_for('generate_schedule', userid=current_user.username) }}" class="button" >Generate</a></li>
+										{%endif%}
 									</ul>
 								</div>
 							</div>
@@ -146,9 +147,6 @@
 									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
 								</section>
 							</div>
-							<ul class="actions">
-								<li><a href="{{url_for('render_schedule')}}" class="button">Learn more</a></li>
-							</ul>
 						</div>
 					</section>
 

@@ -40,6 +40,22 @@ function postCredentials(ed_platform_form) {
     addCredentials(ed_platform_form, tokenKey, userName);
 }
 
+function generateSchedule(userid) {
+    const userid_body = {
+            userid: userid
+    }
+    fetch('/api/v1/generateschedule/' + userid, {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error)); 
+
+
+    return null;
+}
+
+
 document.getElementById('canvasForm').addEventListener('submit', function(event) {
     event.preventDefault(); // This stops the form from submitting the traditional way.
     postCredentials('canvasForm');
@@ -60,13 +76,10 @@ document.getElementById('gradescopeForm').addEventListener('click', function(eve
     postCredentials('gradescopeForm');
 });
 
-//TODO
-function generateSchedule(userid) {
-
-
-
-    return null;
-}
+document.getElementById('generateScheduleButton').addEventListener('click', function(event) { 
+    const userName = document.getElementById('generateScheduleButton').getAttribute('user');
+    generateSchedule(userName);
+});
 
 //TODO
 function modifySchedule(userid, newschedule) {

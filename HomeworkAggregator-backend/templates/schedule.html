@@ -9,8 +9,8 @@
 		<title>Generic - Hyperspace by HTML5 UP</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="static/styles/css/main.css" />
-		<noscript><link rel="stylesheet" href="static/styles/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="../static/styles/css/main.css" />
+		<noscript><link rel="stylesheet" href="../static/styles/css/noscript.css" /></noscript>
 	</head>
 	<body class="is-preload">
 
@@ -33,50 +33,17 @@
 						<div class="inner">
 							<h1 class="major">Tasks</h1>
 							<div class = "scrollmenu">
-								<a href="temp">
-									<section class="schedule-entry">
-										<span class="icon solid major fa-code"></span>
-										<h3>Lorem ipsum amet</h3>
-										<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-										<button>Edit</button>
-									</section>
-								</a>
-
-								<a href="temp">
-									<section>
-										<span class="icon solid major fa-code"></span>
-										<h3>Lorem ipsum amet</h3>
-										<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-										<button>Edit</button>
-									</section>
-								</a>
-
-								<a href="temp">
-									<section>
-										<span class="icon solid major fa-code"></span>
-										<h3>Lorem ipsum amet</h3>
-										<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-										<button>Edit</button>
-									</section>
-								</a>
-
-								<a href="temp">
-									<section>
-										<span class="icon solid major fa-code"></span>
-										<h3>Lorem ipsum amet</h3>
-										<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-										<button>Edit</button>
-									</section>
-								</a>
-
-								<a href="temp">
-									<section>
-										<span class="icon solid major fa-code"></span>
-										<h3>Lorem ipsum amet</h3>
-										<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-										<button>Edit</button>
-									</section>
-								</a>	
+								{% for assignment in assignments.canvas_assignments %}
+									<a href="temp">
+										<section class="schedule-entry">
+											<span class="icon solid major fa-code"></span>
+											<h3>{{ assignment.course_name }}</h3>
+											<p>{{ assignment.assignment_name }}</p>
+											<p>{{ assignment.due_date }}</p>
+											<button>Edit</button>
+										</section>
+									</a>
+								{% endfor %}
 								
 							</ul>
 						</div>
@@ -94,14 +61,14 @@
 			</footer>
 
 		<!-- Scripts -->
-			<script src="static/services/services.js"></script>
-			<script src="static/styles/js/jquery.min.js"></script>
-			<script src="static/styles/js/jquery.scrollex.min.js"></script>
-			<script src="static/styles/js/jquery.scrolly.min.js"></script>
-			<script src="static/styles/js/browser.min.js"></script>
-			<script src="static/styles/js/breakpoints.min.js"></script>
-			<script src="static/styles/js/util.js"></script>
-			<script src="static/styles/js/main.js"></script>
+			<script src="../static/services/services.js"></script>
+			<script src="../static/styles/js/jquery.min.js"></script>
+			<script src="../static/styles/js/jquery.scrollex.min.js"></script>
+			<script src="../static/styles/js/jquery.scrolly.min.js"></script>
+			<script src="../static/styles/js/browser.min.js"></script>
+			<script src="../static/styles/js/breakpoints.min.js"></script>
+			<script src="../static/styles/js/util.js"></script>
+			<script src="../static/styles/js/main.js"></script>
 
 	</body>
 </html>

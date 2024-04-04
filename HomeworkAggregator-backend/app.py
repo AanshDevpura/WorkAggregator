@@ -174,16 +174,14 @@ def index():
     """
     return render_template('index.html')
 
-# Renders an html template to display the user's schedule loaded from the database
-@app.route('/schedule')
-def render_schedule():
+def render_schedule(assignments):
     """Render the schedule page of the application.
 
     Returns:
         The rendered template for the schedule.html.
     """
     
-    return render_template('schedule.html')
+    return render_template('schedule.html', assignments = assignments)
 
 # TODO
 @app.route('/api/v1/addcredentials', methods=['POST'])
@@ -239,8 +237,9 @@ def add_credentials():
         return jsonify({"error": "An error occurred while processing your request"}), 500
 
     return jsonify({"received_data": data}), 200
+
 # TODO
-@app.route('/api/v1/generateschedule/<string:userid>', methods=['POST'])
+@app.route('/generateschedule/<string:userid>')
 def generate_schedule(userid):
     """API endpoint to add generate a schedule for a user.
 
@@ -264,11 +263,26 @@ def generate_schedule(userid):
     """
     
     # Get credentials from the database
-    credentials = AssignmentModel.query.filter_by(userid=userid).first()    
+    credentials = AssignmentModel.query.filter_by(userid=userid).first()
+    
     canvas_token = credentials.canvas_credentials
     moodle_token = credentials.moodle_credentials
+    prairielearn_token = credentials.prairielearn_credentials
+    gradescope_token = credentials.gradescope_credentials
+    
     canvas_assignments = assignments.get_canvas_assignments(canvas_token)
-    return jsonify({"canvas_creds": canvas_token})
+    moodle_assignments = assignments.get_moodle_assignments(moodle_token)
+    # Serialize list of assignments to json
+    canvas_assignments = [assignment.to_dict() for assignment in canvas_assignments]
+    moodle_assignments = [assignment.to_dict() for assignment in moodle_assignments]
+    
+    
+    json = {"canvas_assignments": canvas_assignments,
+                    "moodle_assignments": moodle_assignments,
+                    "prairielearn_assignments": [],
+                    "gradescope_assignments": []}
+    
+    return render_schedule(json)
 
 # TODO
 @app.route('/api/v1/modifyschedule/<string:changes>', methods=['PUT'])
