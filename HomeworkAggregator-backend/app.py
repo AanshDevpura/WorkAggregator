@@ -186,52 +186,59 @@ def render_schedule():
     return render_template('schedule.html')
 
 # TODO
-@app.route('/api/v1/addcredentials/<string:userid>', methods=['POST'])
-def add_credentials(userid):
-    """API endpoint to add credentials for a user.
+@app.route('/api/v1/addcredentials', methods=['POST'])
+def add_credentials():
+    """API endpoint to add credentials for a user."""
+    app.logger.info('Starting to add credentials')
 
-    Args:
-        credentials (str): JSON representation of the credentials containing a platform, userid, and a credentials array. Expect to be of the form
-        
-        {
-            "platform": "string",
-            "userid": "string",
-            "credentials": {"username": "value", "password": "value", "accesstoken": "value"}
-        }
-        
-
-    Returns:
-        Flask response: JSON representation of the credentials.
-    """
-    
     if not request.is_json:
+        app.logger.warning('Request must be JSON')
         return jsonify({"error": "Request must be JSON"}), 400
 
     data = request.json
+    app.logger.info(data)
+    userid = data.get('userid')
     platform = data.get('platform')
-    
+
+    if not userid or not platform:
+        app.logger.warning('User ID or Platform is missing')
+        return jsonify({"error": "User ID or Platform is missing"}), 400
+
+    app.logger.info(f'Received credentials for userid: {userid} on platform: {platform}')
+
     platform_credentials_field = {
-        "canvas": "canvas_credentials",
-        "moodle": "moodle_credentials",
-        "prairielearn": "prairielearn_credentials",
-        "gradescope": "gradescope_credentials",
+        "canvasForm": "canvas_credentials",
+        "moodleForm": "moodle_credentials",
+        "prairielearnForm": "prairielearn_credentials",
+        "gradescopeForm": "gradescope_credentials",
     }
 
-    access_token = data.get('credentials', {}).get('accesstoken')
+    try:
+        access_token = data.get('credentials', {}).get('accesstoken')
 
-    if platform in platform_credentials_field:
-        existing_assignment = AssignmentModel.query.filter_by(userid=userid).first()
-        credential_field = platform_credentials_field[platform]
+        if platform in platform_credentials_field:
+            existing_assignment = AssignmentModel.query.filter_by(userid=userid).first()
+            credential_field = platform_credentials_field[platform]
 
-        if existing_assignment:
-            setattr(existing_assignment, credential_field, access_token)
+            if existing_assignment:
+                app.logger.info('Updating existing assignment with new credentials')
+                setattr(existing_assignment, credential_field, access_token)
+            else:
+                app.logger.info('Creating new assignment with credentials')
+                new_assignment = AssignmentModel(userid=userid, **{credential_field: access_token})
+                db.session.add(new_assignment)
+
+            db.session.commit()
+            app.logger.info('Credentials added/updated successfully')
         else:
-            new_assignment = AssignmentModel(userid=userid, **{credential_field: access_token})
-            db.session.add(new_assignment)
-        
-        db.session.commit()
-    return jsonify({"received_data": data}), 200
+            app.logger.warning(f'Platform {platform} is not supported')
+            return jsonify({"error": f"Platform {platform} is not supported"}), 400
 
+    except Exception as e:
+        app.logger.error(f'Error adding/updating credentials: {e}', exc_info=True)
+        return jsonify({"error": "An error occurred while processing your request"}), 500
+
+    return jsonify({"received_data": data}), 200
 # TODO
 @app.route('/api/v1/generateschedule/<string:userid>', methods=['POST'])
 def generate_schedule(userid):

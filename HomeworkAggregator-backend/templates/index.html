@@ -62,21 +62,27 @@
 									<p>Enter your credentials for our natively supported platforms</p>
 									<ul class="actions">
 										<!-- Canvas Form -->
-                                        <form id="canvasForm" onsubmit="requestData()">
+                                        <form id="canvasForm" user = {{current_user.username}}>
                                             <input type="text" name="tokenKey" placeholder="Canvas Token" required />
                                             <button type="submit">Submit Canvas Token</button>
                                         </form>
                                         
                                         <!-- Moodle Form -->
-                                        <form id="moodleForm" onsubmit="requestData()">
+                                        <form id="moodleForm" user = {{current_user.username}}>
                                             <input type="text" name="tokenKey" placeholder="Moodle Token" required />
                                             <button type="submit">Submit Moodle Token</button>
                                         </form>
                                         
                                         <!-- PrairieLearn Form -->
-                                        <form id="prairielearnForm" onsubmit="requestData()">
+                                        <form id="prairielearnForm" user = {{current_user.username}}>
                                             <input type="text" name="tokenKey" placeholder="PrairieLearn Token" required />
                                             <button type="submit">Submit PrairieLearn Token</button>
+                                        </form>
+
+										<!-- Gradescrope Form -->
+                                        <form id="gradescopeForm" user = {{current_user.username}}>
+                                            <input type="text" name="tokenKey" placeholder="Gradescope Token" required />
+                                            <button type="submit">Submit Gradescope Token</button>
                                         </form>
 									</ul>
 								</div>

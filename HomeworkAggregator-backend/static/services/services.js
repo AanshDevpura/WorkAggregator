@@ -1,23 +1,64 @@
+//TODO
+function addCredentials(ed_platform_form, token, userName) {
+    const credentials = {
+        platform: ed_platform_form,
+        userid: userName,
+        credentials: {
+            username: null,
+            password: null,
+            accesstoken: token, 
+        }
+    };
+
+    console.log(credentials);
+
+    fetch('/api/v1/addcredentials', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(credentials)
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error)); 
+}
+
+function postCredentials(ed_platform_form) {
+    var form = document.getElementById(ed_platform_form);
+    var formData = new FormData(form);
+
+    // Access the 'user' attribute from the form
+    var userName = form.getAttribute('user');
+
+    var formData = new FormData(form);
+    var tokenKey = formData.get('tokenKey');
+
+    console.log(tokenKey);
+    console.log(userName);
+
+    addCredentials(ed_platform_form, tokenKey, userName);
+}
+
 document.getElementById('canvasForm').addEventListener('submit', function(event) {
     event.preventDefault(); // This stops the form from submitting the traditional way.
-    requestData();
+    postCredentials('canvasForm');
 });
 
 document.getElementById('moodleForm').addEventListener('submit', function(event) {
     event.preventDefault(); // This stops the form from submitting the traditional way.
-    requestData();
+    postCredentials('moodleForm');
 });
 
 document.getElementById('prairielearnForm').addEventListener('submit', function(event) {
     event.preventDefault(); // This stops the form from submitting the traditional way.
-    requestData();
+    postCredentials('prairielearnForm');
 });
 
-//TODO
-function addCredentials(userid, credentials) {
-    
-    return null;
-}
+document.getElementById('gradescopeForm').addEventListener('click', function(event) { 
+    event.preventDefault(); // This stops the form from submitting the traditional way.
+    postCredentials('gradescopeForm');
+});
 
 //TODO
 function generateSchedule(userid) {
