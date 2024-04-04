@@ -14,7 +14,8 @@ setup(
         'datetime',
         'tzlocal',
         'pytz',
-        'urllib3==1.26.6'
-        'flask_login'
+        'urllib3==1.26.6',
+        'flask_login',
+        'gradescopecalendar.gradescopecalendar'
     ],
 )
