@@ -3,6 +3,7 @@
 import os
 import secrets
 import requests
+import asyncio
 
 from urllib.parse import urlencode
 from flask import Flask, redirect, url_for, jsonify, render_template, flash, session, current_app, request, abort
@@ -153,7 +154,7 @@ def oauth2_callback(provider):
     return redirect(url_for('index'))
 
 # Logout endpoint. Logs the user out of the application
-@app.route('/logout')
+@app.route('/user/logout')
 def logout():
     logout_user()
     flash('You have been logged out.')
@@ -240,7 +241,7 @@ def add_credentials():
 
 # TODO
 @app.route('/generateschedule/<string:userid>')
-def generate_schedule(userid):
+async def generate_schedule(userid):
     """API endpoint to add generate a schedule for a user.
 
     Args:
@@ -268,19 +269,20 @@ def generate_schedule(userid):
     canvas_token = credentials.canvas_credentials
     moodle_token = credentials.moodle_credentials
     prairielearn_token = credentials.prairielearn_credentials
-    gradescope_token = credentials.gradescope_credentials
+    gradescope_user, gradescope_pass = credentials.gradescope_credentials.split(',')
     
-    canvas_assignments = assignments.get_canvas_assignments(canvas_token)
-    moodle_assignments = assignments.get_moodle_assignments(moodle_token)
+    canvas_assignments = await assignments.get_canvas_assignments(canvas_token)
+    moodle_assignments = await assignments.get_moodle_assignments(moodle_token)
+    gradescope_assignments = await assignments.get_gradescope_assignments(gradescope_user, gradescope_pass, False)
     # Serialize list of assignments to json
     canvas_assignments = [assignment.to_dict() for assignment in canvas_assignments]
     moodle_assignments = [assignment.to_dict() for assignment in moodle_assignments]
-    
+    gradescope_assignments = [assignment.to_dict() for assignment in gradescope_assignments]
     
     json = {"canvas_assignments": canvas_assignments,
                     "moodle_assignments": moodle_assignments,
                     "prairielearn_assignments": [],
-                    "gradescope_assignments": []}
+                    "gradescope_assignments": gradescope_assignments}
     
     return render_schedule(json)
 
