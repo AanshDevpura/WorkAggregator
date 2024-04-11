@@ -1,4 +1,4 @@
-Flask==3.0.2
+Flask[async]==3.0.2
 Flask-SQLAlchemy==3.1.1
 psycopg2-binary==2.9.9
 pytest>=6.0
@@ -8,4 +8,4 @@ tzlocal
 pytz
 urllib3==1.26.6
 flask_login
-gradescopecalendar.gradescopecalendar
+gradescopecalendar

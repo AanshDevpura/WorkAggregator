@@ -3,11 +3,14 @@
 import os
 import secrets
 import requests
+import asyncio
 
 from urllib.parse import urlencode
 from flask import Flask, redirect, url_for, jsonify, render_template, flash, session, current_app, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
+
+import assignments
 
 app = Flask(__name__, static_folder='static')
 
@@ -50,7 +53,10 @@ class AssignmentModel(db.Model):
     __tablename__ = 'hwaggregator_usrinfo'
     userid = db.Column(db.String, primary_key=True)
     canvas_credentials = db.Column(db.String)
-    schedule = db.Column(db.String)
+    moodle_credentials = db.Column(db.String)
+    schedule = db.Column(db.JSON)
+    prairielearn_credentials = db.Column(db.String)
+    gradescope_credentials = db.Column(db.String)
 
 # Table Schema for the users table in our database
 class User(UserMixin, db.Model):
@@ -148,7 +154,7 @@ def oauth2_callback(provider):
     return redirect(url_for('index'))
 
 # Logout endpoint. Logs the user out of the application
-@app.route('/logout')
+@app.route('/user/logout')
 def logout():
     logout_user()
     flash('You have been logged out.')
@@ -169,45 +175,77 @@ def index():
     """
     return render_template('index.html')
 
-# Renders an html template to display the user's schedule loaded from the database
-@app.route('/schedule')
-def render_schedule():
+def render_schedule(assignments):
     """Render the schedule page of the application.
 
     Returns:
         The rendered template for the schedule.html.
     """
-    return render_template('schedule.html')
+    
+    return render_template('schedule.html', assignments = assignments)
 
 # TODO
-@app.route('/api/v1/addcredentials/<string:credentials>', methods=['POST'])
-def add_credentials(credentials):
-    """API endpoint to add credentials for a user.
+@app.route('/api/v1/addcredentials', methods=['POST'])
+def add_credentials():
+    """API endpoint to add credentials for a user."""
+    app.logger.info('Starting to add credentials')
 
-    Args:
-        credentials (str): JSON representation of the credentials containing a platform, userid, and a credentials array. Expect to be of the form
-        
-        {
-            "platform": "string",
-            "userid": "string",
-            "credentials": {"username": "value", "password": "value", "accesstoken": "value"}
-        }
-        
+    if not request.is_json:
+        app.logger.warning('Request must be JSON')
+        return jsonify({"error": "Request must be JSON"}), 400
 
-    Returns:
-        Flask response: JSON representation of the credentials.
-    """
-    return jsonify({"identifier": credentials, "credentials": request.json})
+    data = request.json
+    app.logger.info(data)
+    userid = data.get('userid')
+    platform = data.get('platform')
+
+    if not userid or not platform:
+        app.logger.warning('User ID or Platform is missing')
+        return jsonify({"error": "User ID or Platform is missing"}), 400
+
+    app.logger.info(f'Received credentials for userid: {userid} on platform: {platform}')
+
+    platform_credentials_field = {
+        "canvasForm": "canvas_credentials",
+        "moodleForm": "moodle_credentials",
+        "prairielearnForm": "prairielearn_credentials",
+        "gradescopeForm": "gradescope_credentials",
+    }
+
+    try:
+        access_token = data.get('credentials', {}).get('accesstoken')
+
+        if platform in platform_credentials_field:
+            existing_assignment = AssignmentModel.query.filter_by(userid=userid).first()
+            credential_field = platform_credentials_field[platform]
+
+            if existing_assignment:
+                app.logger.info('Updating existing assignment with new credentials')
+                setattr(existing_assignment, credential_field, access_token)
+            else:
+                app.logger.info('Creating new assignment with credentials')
+                new_assignment = AssignmentModel(userid=userid, **{credential_field: access_token})
+                db.session.add(new_assignment)
+
+            db.session.commit()
+            app.logger.info('Credentials added/updated successfully')
+        else:
+            app.logger.warning(f'Platform {platform} is not supported')
+            return jsonify({"error": f"Platform {platform} is not supported"}), 400
+
+    except Exception as e:
+        app.logger.error(f'Error adding/updating credentials: {e}', exc_info=True)
+        return jsonify({"error": "An error occurred while processing your request"}), 500
+
+    return jsonify({"received_data": data}), 200
 
 # TODO
-@app.route('/api/v1/generateschedule/<string:userid>', methods=['POST'])
-def generate_schedule(userid):
+@app.route('/generateschedule/<string:userid>')
+async def generate_schedule(userid):
     """API endpoint to add generate a schedule for a user.
 
     Args:
         userid (str): userid as a string
-
-        
 
     Returns:
         Flask response: JSON representation of the schedule. It should have a schema of the form 
@@ -224,7 +262,29 @@ def generate_schedule(userid):
             }
         ]
     """
-    return jsonify({"identifier": userid})
+    
+    # Get credentials from the database
+    credentials = AssignmentModel.query.filter_by(userid=userid).first()
+    
+    canvas_token = credentials.canvas_credentials
+    moodle_token = credentials.moodle_credentials
+    prairielearn_token = credentials.prairielearn_credentials
+    gradescope_user, gradescope_pass = credentials.gradescope_credentials.split(',')
+    
+    canvas_assignments = await assignments.get_canvas_assignments(canvas_token)
+    moodle_assignments = await assignments.get_moodle_assignments(moodle_token)
+    gradescope_assignments = await assignments.get_gradescope_assignments(gradescope_user, gradescope_pass, False)
+    # Serialize list of assignments to json
+    canvas_assignments = [assignment.to_dict() for assignment in canvas_assignments]
+    moodle_assignments = [assignment.to_dict() for assignment in moodle_assignments]
+    gradescope_assignments = [assignment.to_dict() for assignment in gradescope_assignments]
+    
+    json = {"canvas_assignments": canvas_assignments,
+                    "moodle_assignments": moodle_assignments,
+                    "prairielearn_assignments": [],
+                    "gradescope_assignments": gradescope_assignments}
+    
+    return render_schedule(json)
 
 # TODO
 @app.route('/api/v1/modifyschedule/<string:changes>', methods=['PUT'])

@@ -3,6 +3,7 @@ from datetime import datetime
 from tzlocal import get_localzone
 import pytz
 import json
+import asyncio
 from gradescopecalendar.gradescopecalendar import GradescopeCalendar
 
 class Assignment:
@@ -21,11 +22,7 @@ class Assignment:
     def __str__(self):
         return f"Course: {self.course_name}\nAssignment: {self.assignment_name}\nDue Date: {self.due_date.strftime('%Y-%m-%d %H:%M:%S')}"
 
-def get_canvas_token():
-    canvas_token = input("Please enter your Canvas access token: ")
-    return canvas_token
-
-def get_canvas_assignments(access_token):
+async def get_canvas_assignments(access_token):
     
     # Headers with authentication
     headers = {
@@ -58,11 +55,7 @@ def get_canvas_assignments(access_token):
                 assignments_list.append(assignment_data)
     return assignments_list
 
-def get_moodle_token():
-    moodle_token = input("Please enter your Moodle access token: ")
-    return moodle_token
-
-def get_moodle_assignments(access_token):
+async def get_moodle_assignments(access_token):
     
     # Moodle API parameters
     params = {
@@ -98,18 +91,13 @@ def get_moodle_assignments(access_token):
             
     return assignments_list
 
-def get_gradescope_login():
-    email = input("Please enter your Gradescope email: ")
-    password = input("Please enter your Gradescope password: ")
-    return email, password
-
-def get_gradescope_assignments(email, password, is_instructor):
+async def get_gradescope_assignments(email, password, is_instructor):
     
     # Generate calendar
     try:
         calendar = GradescopeCalendar(email, password, is_instructor)
     except Exception as e:
-        return [];
+        return []
     calendar._get_calendar_info()
     
     # Fetch assignments from the calendar
@@ -137,54 +125,3 @@ def get_gradescope_assignments(email, password, is_instructor):
     # Sort assignments by due_date
     assignments_list = sorted(assignments_list, key=lambda x: x.due_date)
     return assignments_list
-
-def get_canvas_assignments_only():
-    canvas_token = get_canvas_token()
-    canvas_assignments = get_canvas_assignments(canvas_token)
-    json_data = json.dumps([assignment.to_dict() for assignment in canvas_assignments], indent=4)
-    print(json_data)
-
-def get_moodle_assignments_only():
-    moodle_token = get_moodle_token()
-    moodle_assignments = get_moodle_assignments(moodle_token)
-    json_data = json.dumps([assignment.to_dict() for assignment in moodle_assignments], indent=4)
-    print(json_data)
-
-def get_gradescope_assignments_only():
-    email, password = get_gradescope_login()
-    is_instructor = False
-    gradescope_assignments = get_gradescope_assignments(email, password, is_instructor)
-    json_data = json.dumps([assignment.to_dict() for assignment in gradescope_assignments], indent=4)
-    print(json_data)
-
-def get_assignments():
-    # Get Canvas API token
-    canvas_token = get_canvas_token()
-
-    # Get Canvas assignments
-    canvas_assignments = get_canvas_assignments(canvas_token)
-
-    # Get Moodle API token
-    moodle_token = get_moodle_token()
-
-    # Get Moodle assignments
-    moodle_assignments = get_moodle_assignments(moodle_token)
-
-    #Get Gradescope login
-    email, password = get_gradescope_login()
-    is_instructor = False
-
-    #Get Gradescope assignments
-    gradescope_assignments = get_gradescope_assignments(email, password, is_instructor)
-    
-    #Combine and sort assignment
-    combined_assignments = sorted(canvas_assignments + moodle_assignments + gradescope_assignments, key=lambda x: x.due_date)
-    
-    # Convert to JSON
-    json_data = json.dumps([assignment.to_dict() for assignment in combined_assignments], indent=4)
-    
-    # Print or return the JSON data
-    print(json_data)
-
-    # If you want to return instead of print, use the following line
-    # return json_data

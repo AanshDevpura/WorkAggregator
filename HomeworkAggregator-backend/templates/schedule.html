@@ -9,18 +9,18 @@
 		<title>Generic - Hyperspace by HTML5 UP</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="static/styles/css/main.css" />
-		<noscript><link rel="stylesheet" href="static/styles/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="../static/styles/css/main.css" />
+		<noscript><link rel="stylesheet" href="../static/styles/css/noscript.css" /></noscript>
 	</head>
 	<body class="is-preload">
 
 		<!-- Header -->
 			<header id="header">
-				<a href="{{ url_for('index') }}" class="title">Hyperspace</a>
+				<a href="{{ url_for('index') }}" class="title">WorkAggregator</a>
 				<nav>
 					<ul>
 						<li><a href="{{ url_for('index') }}">Home</a></li>
-						<li><a href="generic.html" class="active">Generic</a></li>
+						<li><a href="generic.html" class="active">Schedule</a></li>
 					</ul>
 				</nav>
 			</header>
@@ -31,10 +31,61 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h1 class="major">A Generic Page</h1>
-							<span class="image fit"><img src="static/styles/images/pic04.jpg" alt="" /></span>
-							<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
-							<p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fersapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique lorem ipsum dolor.</p>
+							<h1 class="major">Tasks</h1>
+							<div class = "scrollmenu">
+								{% for assignment in assignments.canvas_assignments %}
+									<a href="temp">
+										<section class="schedule-entry">
+											<span class="icon solid major fa-code"></span>
+											
+											<h3>{{ assignment.course_name }}</h3>
+											<p>{{ assignment.assignment_name }}</p>
+											<p>{{ assignment.due_date }}</p>
+											<p>Canvas</p>
+											<button>Edit</button>
+										</section>
+									</a>
+								{% endfor %}
+								{% for assignment in assignments.moodle_assignments %}
+									<a href="temp">
+										<section class="schedule-entry">
+											<span class="icon solid major fa-code"></span>
+											
+											<h3>{{ assignment.course_name }}</h3>
+											<p>{{ assignment.assignment_name }}</p>
+											<p>{{ assignment.due_date }}</p>
+											<p>Moodle</p>
+											<button>Edit</button>
+										</section>
+									</a>
+								{% endfor %}
+								{% for assignment in assignments.prairielearn_assignments %}
+									<a href="temp">
+										<section class="schedule-entry">
+											<span class="icon solid major fa-code"></span>
+											
+											<h3>{{ assignment.course_name }}</h3>
+											<p>{{ assignment.assignment_name }}</p>
+											<p>{{ assignment.due_date }}</p>
+											<p>PrairieLearn</p>
+											<button>Edit</button>
+										</section>
+									</a>
+								{% endfor %}
+								{% for assignment in assignments.gradescope_assignments %}
+									<a href="temp">
+										<section class="schedule-entry">
+											<span class="icon solid major fa-code"></span>
+											
+											<h3>{{ assignment.course_name }}</h3>
+											<p>{{ assignment.assignment_name }}</p>
+											<p>{{ assignment.due_date }}</p>
+											<p>Gradescope</p>
+											<button>Edit</button>
+										</section>
+									</a>
+								{% endfor %}
+							</ul>
 						</div>
 					</section>
 
@@ -44,20 +95,20 @@
 			<footer id="footer" class="wrapper alt">
 				<div class="inner">
 					<ul class="menu">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
 					</ul>
 				</div>
 			</footer>
 
 		<!-- Scripts -->
-			<script src="static/services/services.js"></script>
-			<script src="static/styles/js/jquery.min.js"></script>
-			<script src="static/styles/js/jquery.scrollex.min.js"></script>
-			<script src="static/styles/js/jquery.scrolly.min.js"></script>
-			<script src="static/styles/js/browser.min.js"></script>
-			<script src="static/styles/js/breakpoints.min.js"></script>
-			<script src="static/styles/js/util.js"></script>
-			<script src="static/styles/js/main.js"></script>
+			<script src="../static/services/services.js"></script>
+			<script src="../static/styles/js/jquery.min.js"></script>
+			<script src="../static/styles/js/jquery.scrollex.min.js"></script>
+			<script src="../static/styles/js/jquery.scrolly.min.js"></script>
+			<script src="../static/styles/js/browser.min.js"></script>
+			<script src="../static/styles/js/breakpoints.min.js"></script>
+			<script src="../static/styles/js/util.js"></script>
+			<script src="../static/styles/js/main.js"></script>
 
 	</body>
 </html>
