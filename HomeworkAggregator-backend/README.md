@@ -1,3 +1,7 @@
+# Flask Backend Service
+
+### Running the application
+
 To build the application for the first time, run:
 
 chmod +x run-app
