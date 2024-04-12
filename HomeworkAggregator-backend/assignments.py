@@ -7,20 +7,19 @@ import asyncio
 from gradescopecalendar.gradescopecalendar import GradescopeCalendar
 
 class Assignment:
-    def __init__(self, course_name, assignment_name, due_date):
+    def __init__(self, course_name, assignment_name, due_date, source):
         self.course_name = course_name
         self.assignment_name = assignment_name
         self.due_date = due_date
+        self.source = source
 
     def to_dict(self):
         return {
             "course_name": self.course_name,
             "assignment_name": self.assignment_name,
-            "due_date": self.due_date.strftime('%Y-%m-%d %H:%M:%S')
+            "due_date": self.due_date.strftime('%Y-%m-%d %H:%M:%S'),
+            "source": self.source
         }
-
-    def __str__(self):
-        return f"Course: {self.course_name}\nAssignment: {self.assignment_name}\nDue Date: {self.due_date.strftime('%Y-%m-%d %H:%M:%S')}"
 
 async def get_canvas_assignments(access_token):
     
@@ -50,7 +49,8 @@ async def get_canvas_assignments(access_token):
                 assignment_data = Assignment(
                     course_name=submission["context_name"],
                     assignment_name=assignment["name"],
-                    due_date=due_date_local
+                    due_date=due_date_local,
+                    source = "Canvas"
                 )
                 assignments_list.append(assignment_data)
     return assignments_list
@@ -85,7 +85,9 @@ async def get_moodle_assignments(access_token):
                 assignment_data = Assignment(
                     course_name=event['course']['fullname'],
                     assignment_name=event['name'],
-                    due_date=due_date_local
+                    due_date=due_date_local,
+                    source = "Moodle"
+
                 )
                 assignments_list.append(assignment_data)
             
@@ -118,7 +120,8 @@ async def get_gradescope_assignments(email, password, is_instructor):
             assignment_data = Assignment(
                 course_name=assignment_details.course.name,
                 assignment_name=assignment_details.name,
-                due_date=due_date_local
+                due_date=due_date_local,
+                source = "Gradescope"
             )
             assignments_list.append(assignment_data)
             
