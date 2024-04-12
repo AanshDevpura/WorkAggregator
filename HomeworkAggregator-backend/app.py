@@ -279,7 +279,6 @@ async def generate_schedule(userid):
     canvas_assignments = [assignment.to_dict() for assignment in canvas_assignments]
     moodle_assignments = [assignment.to_dict() for assignment in moodle_assignments]
     gradescope_assignments = [assignment.to_dict() for assignment in gradescope_assignments]
-    print(canvas_assignments)
     all_assignments = sorted(canvas_assignments + moodle_assignments + gradescope_assignments, key=lambda x: datetime.strptime(x['due_date'], '%Y-%m-%d %H:%M:%S'))
     json = {"all": all_assignments}
     
