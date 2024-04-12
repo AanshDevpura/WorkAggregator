@@ -14,10 +14,13 @@ class Assignment:
         self.source = source
 
     def to_dict(self):
+        central_tz = pytz.timezone('America/Chicago')  # Central Time Zone
+        due_date_central = self.due_date.astimezone(central_tz)
+        
         return {
             "course_name": self.course_name,
             "assignment_name": self.assignment_name,
-            "due_date": self.due_date.strftime('%Y-%m-%d %H:%M:%S'),
+            "due_date": due_date_central.strftime('%Y-%m-%d %H:%M:%S'),
             "source": self.source
         }
 
