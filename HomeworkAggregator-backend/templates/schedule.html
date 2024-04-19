@@ -33,54 +33,15 @@
 						<div class="inner">
 							<h1 class="major">Tasks</h1>
 							<div class = "scrollmenu">
-								{% for assignment in assignments.canvas_assignments %}
+								{% for assignment in assignments.all %}
 									<a href="temp">
 										<section class="schedule-entry">
 											<span class="icon solid major fa-code"></span>
 											
 											<h3>{{ assignment.course_name }}</h3>
 											<p>{{ assignment.assignment_name }}</p>
-											<p>{{ assignment.due_date }}</p>
-											<p>Canvas</p>
-											<button>Edit</button>
-										</section>
-									</a>
-								{% endfor %}
-								{% for assignment in assignments.moodle_assignments %}
-									<a href="temp">
-										<section class="schedule-entry">
-											<span class="icon solid major fa-code"></span>
-											
-											<h3>{{ assignment.course_name }}</h3>
-											<p>{{ assignment.assignment_name }}</p>
-											<p>{{ assignment.due_date }}</p>
-											<p>Moodle</p>
-											<button>Edit</button>
-										</section>
-									</a>
-								{% endfor %}
-								{% for assignment in assignments.prairielearn_assignments %}
-									<a href="temp">
-										<section class="schedule-entry">
-											<span class="icon solid major fa-code"></span>
-											
-											<h3>{{ assignment.course_name }}</h3>
-											<p>{{ assignment.assignment_name }}</p>
-											<p>{{ assignment.due_date }}</p>
-											<p>PrairieLearn</p>
-											<button>Edit</button>
-										</section>
-									</a>
-								{% endfor %}
-								{% for assignment in assignments.gradescope_assignments %}
-									<a href="temp">
-										<section class="schedule-entry">
-											<span class="icon solid major fa-code"></span>
-											
-											<h3>{{ assignment.course_name }}</h3>
-											<p>{{ assignment.assignment_name }}</p>
-											<p>{{ assignment.due_date }}</p>
-											<p>Gradescope</p>
+											<p>{{ assignment.due_date }} CT</p>
+											<p>{{ assignment.source }}</p>
 											<button>Edit</button>
 										</section>
 									</a>

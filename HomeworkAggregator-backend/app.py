@@ -9,6 +9,8 @@ from urllib.parse import urlencode
 from flask import Flask, redirect, url_for, jsonify, render_template, flash, session, current_app, request, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
+from datetime import datetime
+import pytz
 
 import assignments
 
@@ -274,16 +276,15 @@ async def generate_schedule(userid):
     canvas_assignments = await assignments.get_canvas_assignments(canvas_token)
     moodle_assignments = await assignments.get_moodle_assignments(moodle_token)
     gradescope_assignments = await assignments.get_gradescope_assignments(gradescope_user, gradescope_pass, False)
+
+    
     # Serialize list of assignments to json
     canvas_assignments = [assignment.to_dict() for assignment in canvas_assignments]
     moodle_assignments = [assignment.to_dict() for assignment in moodle_assignments]
     gradescope_assignments = [assignment.to_dict() for assignment in gradescope_assignments]
     
-    json = {"canvas_assignments": canvas_assignments,
-                    "moodle_assignments": moodle_assignments,
-                    "prairielearn_assignments": [],
-                    "gradescope_assignments": gradescope_assignments}
-    
+    all_assignments = sorted(canvas_assignments + moodle_assignments + gradescope_assignments, key=lambda x: datetime.strptime(x['due_date'], '%Y-%m-%d %H:%M:%S'))
+    json = {"all": all_assignments}
     return render_schedule(json)
 
 # TODO

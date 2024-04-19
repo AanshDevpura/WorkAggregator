@@ -12,7 +12,6 @@ setup(
         'pytest',
         'requests',
         'datetime',
-        'tzlocal',
         'pytz',
         'urllib3==1.26.6',
         'flask_login',
