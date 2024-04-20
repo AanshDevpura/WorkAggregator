@@ -21,8 +21,8 @@
 					<nav>
 						<ul>
 							<li><a href="#intro">Welcome</a></li>
-							<li><a href="#one">Try It Out</a></li>
-							<li><a href="#three">Get in touch</a></li>
+							<li><a href="#one">Make schedule</a></li>
+							<li><a href="#two">Contact Information</a></li>
 							
 							{% if current_user.is_authenticated %}
 								<li><a class="button" href="{{ url_for('logout') }}">Logout</a></li>
@@ -118,8 +118,8 @@
 						</section>
 						{% endif %}
 					</section>
-				<!-- Three -->
-					<section id="contact" class="wrapper style1 fade-up">
+				<!-- Two -->
+					<section id="two" class="wrapper style1 fade-up">
 						<div class="inner">
 							<h2>Contact Information</h2>
 							<div class="split style1">
