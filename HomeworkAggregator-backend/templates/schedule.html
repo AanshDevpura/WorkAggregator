@@ -17,12 +17,6 @@
 		<!-- Header -->
 			<header id="header">
 				<a href="{{ url_for('index') }}" class="title">WorkAggregator</a>
-				<nav>
-					<ul>
-						<li><a href="{{ url_for('index') }}">Home</a></li>
-						<li><a href="generic.html" class="active">Schedule</a></li>
-					</ul>
-				</nav>
 			</header>
 
 		<!-- Wrapper -->
@@ -34,7 +28,7 @@
 							<h1 class="major">Tasks</h1>
 							<div class = "scrollmenu">
 								{% for assignment in assignments.all %}
-									<a href="temp">
+									<a>
 										<section class="schedule-entry">
 											<span class="icon solid major fa-code"></span>
 											
@@ -42,7 +36,6 @@
 											<p>{{ assignment.assignment_name }}</p>
 											<p>{{ assignment.due_date }} CT</p>
 											<p>{{ assignment.source }}</p>
-											<button>Edit</button>
 										</section>
 									</a>
 								{% endfor %}
