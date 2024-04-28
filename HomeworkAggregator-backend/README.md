@@ -9,12 +9,15 @@ Our website requires users to log in via Git OAuth2 authentication. This allows 
 
 ### Installation Instructions
 If running for first time on Unix-based systems, you must run this to give the file permission:
+
 chmod +x run-app
 
 Then run:
+
 docker-compose up --build
 
 Once it's running:
+
 Open up localhost:8888 in a browser
 
 ### Group Members and their Roles
