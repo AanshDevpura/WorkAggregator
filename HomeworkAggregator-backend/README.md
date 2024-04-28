@@ -13,9 +13,11 @@ If running for first time on Unix-based systems, you must run this to give the f
 chmod +x run-app
 
 
+
 Then run:
 
 docker-compose up --build
+
 
 
 Once it's running:
