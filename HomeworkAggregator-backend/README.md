@@ -22,6 +22,8 @@ Open up localhost:8888 in a browser
 
 ### Group Members and their Roles
 Kevin Chen: Implemented Database, Git OAuth2, and most of fullstack.
+
 Aansh Devpura: Implemented fetching Canvas, Moodle, and Gradescope assignments. Also implemented some fullstack modifications.
+
 Abhinav Angirekula: Implemented feteching PrairieLearn assignments.
 
