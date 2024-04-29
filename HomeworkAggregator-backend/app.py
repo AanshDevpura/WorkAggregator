@@ -10,7 +10,6 @@ from flask import Flask, redirect, url_for, jsonify, render_template, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from datetime import datetime
-import pytz
 
 import assignments
 
