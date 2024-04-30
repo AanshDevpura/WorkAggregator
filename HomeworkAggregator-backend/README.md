@@ -12,6 +12,8 @@ If running for first time on Unix-based systems, you must run this to give the f
 
 chmod +x run-app
 
+You also must have docker installed
+
 Then run:
 
 docker-compose up --build
