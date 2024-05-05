@@ -65,7 +65,14 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=True)
-  
+
+# Clear the database and recreate it
+@app.route('/clear_database')
+def clear_database():
+    db.drop_all()
+    db.create_all()
+    return "Database cleared and recreated."
+
 # Courtesy of https://github.com/miguelgrinberg/flask-oauth-example/blob/main/app.py  
 # OAuth2 Endpoint. Redirects the user to the OAuth2 provider's authorization URL to log in
 @app.route('/authorize/<provider>')
