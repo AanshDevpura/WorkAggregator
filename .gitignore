@@ -1,5 +1,5 @@
-HomeworkAggregator-backend/pgdata
-HomeworkAggregator-backend/pgdata/*
+#HomeworkAggregator-backend/pgdata
+#HomeworkAggregator-backend/pgdata/*
 HomeworkAggregator-backend/__pycache__
 HomeworkAggregator-backend/.pytest_cache
 HomeworkAggregator-backend/__pycache__/*
