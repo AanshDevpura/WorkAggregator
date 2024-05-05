@@ -115,7 +115,7 @@ async def get_gradescope_assignments(email, password, is_instructor):
                 due_date=due_date,
                 source = "Gradescope"
             )
-        assignments_list.append(assignment_data)
+            assignments_list.append(assignment_data)
             
     # Sort assignments by due_date
     assignments_list = sorted(assignments_list, key=lambda x: x.due_date)
