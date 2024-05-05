@@ -108,14 +108,14 @@ async def get_gradescope_assignments(email, password, is_instructor):
     assignments_list = []
     for assignment_name, assignment_details in gradescope_assignments.items():
         due_date = assignment_details.close_date
-        if due_date > now and assignment_details.status != 'Submitted':
-            assignment_data = Assignment(
-                course_name=assignment_details.course.name,
-                assignment_name=assignment_details.name,
-                due_date=due_date,
-                source = "Gradescope"
-            )
-            assignments_list.append(assignment_data)
+        #if due_date > now and assignment_details.status != 'Submitted':
+        assignment_data = Assignment(
+            course_name=assignment_details.course.name,
+            assignment_name=assignment_details.name,
+            due_date=due_date,
+            source = "Gradescope"
+        )
+        assignments_list.append(assignment_data)
             
     # Sort assignments by due_date
     assignments_list = sorted(assignments_list, key=lambda x: x.due_date)

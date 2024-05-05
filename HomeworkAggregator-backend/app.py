@@ -274,10 +274,10 @@ async def generate_schedule(userid):
     # Get credentials from the database
     credentials = AssignmentModel.query.filter_by(userid=userid).first()
     
-    canvas_token = credentials.canvas_credentials
-    moodle_token = credentials.moodle_credentials
-    prairielearn_token = credentials.prairielearn_credentials
-    gradescope_user, gradescope_pass = credentials.gradescope_credentials.split(',')
+    canvas_token = credentials.canvas_credentials if credentials and credentials.canvas_credentials else ''
+    moodle_token = credentials.moodle_credentials if credentials and credentials.moodle_credentials else ''
+    prairielearn_token = credentials.prairielearn_credentials if credentials and credentials.prairielearn_credentials else ''
+    gradescope_user, gradescope_pass = credentials.gradescope_credentials.split(',') if credentials and credentials.gradescope_credentials else ('', '')
     
     canvas_assignments = await assignments.get_canvas_assignments(canvas_token)
     moodle_assignments = await assignments.get_moodle_assignments(moodle_token)
