@@ -14,8 +14,8 @@ services:
       - POSTGRES_DB=hwuserinfo
       - POSTGRES_HOST=homeworkaggregator_db
       - POSTGRES_PORT=5432   
-      - GITHUB_CLIENT_ID=14bda77f480ab19d7bbf
-      - GITHUB_CLIENT_SECRET=d32a058922985c50b03b20724f7f7000d0bf0853
+      - GITHUB_CLIENT_ID=Ov23li0AWnSNmgLwZDuL
+      - GITHUB_CLIENT_SECRET=a8de194f576da8d4b01327acbdc24950939ebe56
       - SUPABASE_DB=gM5Z7Lib1XL5afgf
 
   db:
