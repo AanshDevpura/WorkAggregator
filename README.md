@@ -10,26 +10,19 @@ Our website requires users to log in via Git OAuth2 authentication. This allows 
 ### Installation Instructions
 If running for first time on Unix-based systems, you must run this to give the file permission:
 
-# Pull the docker image:
-
-docker pull postgres
-
-# Download and add the database:
-
-https://drive.google.com/drive/folders/1OZjmn5yA_LxUZZadwIFSzkjyfqcJGQaG?usp=drive_link
-Must be signed into the UIUC google email
-
 chmod +x run-app
+
+This should run the application:
 
 docker-compose up --build
 
-This should run the application. If you need to restart after changes, you can use:
+If you need to restart after changes, you can use:
 
 docker-compose down
 
 docker-compose up -d
 
-Once it's running, open up localhost:8888 in a browser and there should be some UI showing up
+Once it's running, open up localhost:8888 in a browser
 
 ### Group Members and their Roles
 Kevin Chen: Implemented Database, Git OAuth2, and most of fullstack.
