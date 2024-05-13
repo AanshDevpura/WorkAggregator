@@ -55,7 +55,6 @@ class AssignmentModel(db.Model):
     userid = db.Column(db.String, primary_key=True)
     canvas_credentials = db.Column(db.String)
     moodle_credentials = db.Column(db.String)
-    schedule = db.Column(db.JSON)
     gradescope_credentials = db.Column(db.String)
 
 # Table Schema for the users table in our database
