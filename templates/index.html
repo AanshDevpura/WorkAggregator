@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>WAgg</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="icon" type="image/x-icon" href="static/styles/images/favicon.ico">
+		<link rel="stylesheet" href="static/styles/css/main.css" />
+		<noscript><link rel="stylesheet" href="static/styles/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Welcome</a></li>
+							<li><a href="#one">Make schedule</a></li>
+							<li><a href="#two">Contact Information</a></li>
+							
+							{% if current_user.is_authenticated %}
+								<li><a class="button" href="{{ url_for('logout') }}">Logout</a></li>
+							{% endif %}
+							
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<h1>Work Aggregator</h1>
+							<p>A central platform for getting all your tasks into one place</p>
+
+                            {% if current_user.is_authenticated %}
+                                <p>Hi, {{ current_user.username }}!</p>
+                                <ul class="actions">
+                                    <li><a href="#one" class="button scrolly">Get Started</a></li>
+                                </ul>
+                            {% else %}
+                                <p>
+                                <a class="button" href="{{ url_for('oauth2_authorize', provider='github') }}">Login with GitHub</a>
+                                </p>
+                            {% endif %}
+						</div>
+					</section>
+				<!-- One -->
+					<section id="one" class="wrapper style2 spotlights">
+						{% if current_user.is_authenticated %}
+						<section>
+							<div class="content">
+								<div class="inner">
+									<h2>Set your credentials</h2>
+									<p>Enter your credentials for our natively supported platforms</p>
+									<ul>
+										<!-- Canvas Form -->
+                                        <form id="canvasForm" user = {{current_user.username}}>
+                                            <input type="text" name="tokenKey" placeholder="Canvas Token" required />
+                                            <button type="submit">Submit Canvas Token</button>
+                                        </form>
+                                        
+                                        <!-- Moodle Form -->
+                                        <form id="moodleForm" user = {{current_user.username}}>
+                                            <input type="text" name="tokenKey" placeholder="Moodle Token" required />
+                                            <button type="submit">Submit Moodle Token</button>
+                                        </form>
+
+										<!-- Gradescrope Form -->
+                                        <form id="gradescopeForm" user = {{current_user.username}}>
+                                            <input type="text" name="tokenUser" placeholder="Gradescope Email" required />
+											<input type="text" name="tokenPass" placeholder="Gradescope Password" required />
+                                            <button type="submit">Submit Gradescope Credentials</button>
+                                        </form>
+									</ul>
+								</div>
+							</div>
+						</section>
+						<section>
+							<div class="content">
+								<div class="inner">
+									<h2>Generate A Schedule</h2>
+									<p>Automatically produce a tailored schedule according to the credentials provided</p>
+									<ul class="actions">
+										{%if current_user.is_authenticated%}
+											<li><a href="{{ url_for('generate_schedule', userid=current_user.username) }}" class="button" >Generate
+
+											</a></li>
+										{%endif%}
+									</ul>
+								</div>
+							</div>
+						</section>
+						{%else%}
+						<section>
+						<div class="content">
+							<div class="inner">
+								<h2>Log in to access</h2>
+							</div>
+						</div>
+						</section>
+						{% endif %}
+					</section>
+				<!-- Two -->
+					<section id="two" class="wrapper style1 fade-up">
+						<div class="inner">
+							<h2>Contact Information</h2>
+							<div class="split style1">
+								<section>
+									<ul class="contact">
+										<li>
+											<h3>Email</h3>
+											<a href="mailto:kevinlc3@illinois.edu?subject=Regarding%20Work%20Aggregator">kevinlc3@illinois.edu</a>
+										</li>
+										<li>
+											<h3>Social</h3>
+											<ul class="icons">
+												<li><a href="https://github.com/kevinchensunshine" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+												<li><a href="https://www.linkedin.com/in/kevin-chen-uiuc/" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+											</ul>
+										</li>
+									</ul>
+								</section>
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+            <script src="static/services/services.js"></script>
+			<script src="static/styles/js/jquery.min.js"></script>
+			<script src="static/styles/js/jquery.scrollex.min.js"></script>
+			<script src="static/styles/js/jquery.scrolly.min.js"></script>
+			<script src="static/styles/js/browser.min.js"></script>
+			<script src="static/styles/js/breakpoints.min.js"></script>
+			<script src="static/styles/js/util.js"></script>
+			<script src="static/styles/js/main.js"></script>
