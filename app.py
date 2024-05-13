@@ -244,29 +244,9 @@ def add_credentials():
 
     return jsonify({"received_data": data}), 200
 
-# TODO
 @app.route('/generateschedule/<string:userid>')
 async def generate_schedule(userid):
-    """API endpoint to add generate a schedule for a user.
-
-    Args:
-        userid (str): userid as a string
-
-    Returns:
-        Flask response: JSON representation of the schedule. It should have a schema of the form 
-        [
-            {
-                "assignment_name": "string",
-                "date_end": "YYYY-MM-DD",
-                "date_begin": "YYYY-MM-DD",
-                "source": "string",
-                "additionalinfo": [
-                "string",
-                "string"
-                ]
-            }
-        ]
-    """
+    """API endpoint to generate a schedule for a user. """
     
     # Get credentials from the database
     credentials = AssignmentModel.query.filter_by(userid=userid).first()
@@ -288,87 +268,3 @@ async def generate_schedule(userid):
     all_assignments = sorted(canvas_assignments + moodle_assignments + gradescope_assignments, key=lambda x: datetime.strptime(x['due_date'], '%Y-%m-%d %H:%M:%S'))
     json = {"all": all_assignments}
     return render_schedule(json)
-
-# TODO
-@app.route('/api/v1/modifyschedule/<string:changes>', methods=['PUT'])
-def modify_schedule(userid):
-    """API endpoint to modify a user's schedule.
-
-    Args:
-        changes (str): JSON representation of the credentials containing a platform, userid, and a credentials array. Expect to be of the form
-        
-        {
-            "userid": "string",
-            "schedule": schedule of json schema:
-            [
-                {
-                    "assignment_name": "string",
-                    "date_end": "YYYY-MM-DD",
-                    "date_begin": "YYYY-MM-DD",
-                    "source": "string",
-                    "additionalinfo": [
-                    "string",
-                    "string"
-                    ]
-                }
-            ]
-        }
-        
-
-    Returns:
-        Flask response: JSON representation of the credentials.
-    """
-    return jsonify({"identifier": userid})
-
-# API endpoint to retrieve all assignments
-@app.route('/api/assignments', methods=['GET'])
-def get_assignments():
-    """API endpoint to retrieve assignments.
-
-    Returns:
-        Flask response: JSON representation of the assignments including names and due times.
-    """
-    assignments = AssignmentModel.query.all()
-
-    response_data = [{
-        "name": assignment.userid,
-        "canvas_creds": assignment.canvas_credentials,
-        "schedule": assignment.schedule
-    } for assignment in assignments]
-
-    return jsonify(response_data)
-
-# API endpoint to retrieve add an assignment
-@app.route('/api/assignments', methods=['POST'])
-def create_assignment():
-    """API endpoint to create a new assignment."""
-    data = request.json
-    name = data.get('name')
-    due_time = data.get('due_time')
-
-    if not name or not due_time:
-        return jsonify({"error": "Name and due time are required."}), 400
-
-    new_assignment = AssignmentModel(name=name, due_time=due_time)
-    db.session.add(new_assignment)
-    db.session.commit()
-
-    return jsonify({"message": "Assignment created successfully."}), 201
-
-# API endpoint to retrieve delete an assignment
-@app.route('/api/assignments/<int:assignment_id>', methods=['DELETE'])
-def delete_assignment(assignment_id):
-    """API endpoint to delete an assignment."""
-    assignment = AssignmentModel.query.get(assignment_id)
-
-    if not assignment:
-        return jsonify({"error": "Assignment not found."}), 404
-
-    db.session.delete(assignment)
-    db.session.commit()
-
-    return jsonify({"message": "Assignment deleted successfully."})
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
