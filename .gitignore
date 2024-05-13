@@ -4,6 +4,6 @@ __pycache__
 .pytest_cache
 __pycache__/*
 .pytest_cache/*
-__pycache__
-_pycache__/*
+test/__pycache__
+test/_pycache__/*
 gradescopecalendar.log

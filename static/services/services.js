@@ -1,4 +1,3 @@
-//TODO
 function addCredentials(ed_platform_form, token, userName) {
     const credentials = {
         platform: ed_platform_form,
@@ -76,9 +75,3 @@ window.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 });
-
-
-//TODO
-function modifySchedule(userid, newschedule) {
-    return null;
-}
