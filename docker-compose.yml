@@ -14,9 +14,8 @@ services:
       - POSTGRES_DB=hwuserinfo
       - POSTGRES_HOST=homeworkaggregator_db
       - POSTGRES_PORT=5432   
-      - GITHUB_CLIENT_ID=Ov23li0AWnSNmgLwZDuL
-      - GITHUB_CLIENT_SECRET=a8de194f576da8d4b01327acbdc24950939ebe56
-      - SUPABASE_DB=gM5Z7Lib1XL5afgf
+      - GITHUB_CLIENT_ID= #enter your github client id
+      - GITHUB_CLIENT_SECRET= #enter your github client secret
 
   db:
     image: postgres

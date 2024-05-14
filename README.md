@@ -12,6 +12,8 @@ If running for first time on Unix-based systems, you must run this to give the f
 
 chmod +x run-app
 
+Also, you must enter a github client id and client with Homepage URL of http://localhost and  Callback URL of http://localhost/callback into the docker-compose for the Git OAuth2 to work.
+
 This should run the application:
 
 docker-compose up --build

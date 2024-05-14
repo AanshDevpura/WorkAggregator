@@ -1,5 +1,3 @@
-'''Data Visualization Dashboard build on a flask backend and d3.js for displays. Currently supports a get command to retrieve time and value data based on a string identifier'''
-
 import os
 import secrets
 import requests
