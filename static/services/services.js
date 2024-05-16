@@ -38,21 +38,6 @@ function postCredentials(ed_platform_form) {
     addCredentials(ed_platform_form, tokenKey, userName);
 }
 
-function generateSchedule(userid) {
-    const userid_body = {
-            userid: userid
-    }
-    fetch('/api/v1/generateschedule/' + userid, {
-        method: 'GET'
-      })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error)); 
-
-
-    return null;
-}
-
 window.addEventListener('DOMContentLoaded', (event) => {
 
     const canvasForm = document.getElementById('canvasForm');
