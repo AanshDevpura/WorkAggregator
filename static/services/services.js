@@ -25,7 +25,6 @@ function addCredentials(ed_platform_form, token, userName) {
 
 function postCredentials(ed_platform_form) {
     var form = document.getElementById(ed_platform_form);
-    var formData = new FormData(form);
 
     // Access the 'user' attribute from the form
     var userName = form.getAttribute('user');
