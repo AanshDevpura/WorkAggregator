@@ -1,5 +1,4 @@
-### Project Name
-Work Aggregator
+# Work Aggregator
 
 ### Introduction
 The website combines upcoming uncompleted Canvas, Moodle, and Gradescopea assignments into a unified schedule, making it easy for University of Illinois Urbana-Champaign students to see what assignments they still need to complete.
