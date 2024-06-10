@@ -188,7 +188,6 @@ def render_schedule(assignments):
     
     return render_template('schedule.html', assignments = assignments)
 
-# TODO
 @app.route('/api/v1/addcredentials', methods=['POST'])
 def add_credentials():
     """API endpoint to add credentials for a user."""
